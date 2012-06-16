@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+  <title>Tumblr Test!</title>
+</head>
+<body class="tumblr-test">
+  <a href="#" class="tumblr-post">Post to my tumblr!</a>
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript">
+
+    (function ($) {
+      var tumbler = (function ($) {
+        var openWindow = function (url) {
+          window.open('/oauth',
+                          "TumblrOAuth",
+                          "resizable=no,scrollbars=no,status=yes,width=500,height=500");
+        },
+
+        showAuthWindow = function () {
+          openWindow();
+        }
+
+        return {
+          showAuthWindow : showAuthWindow
+        };
+
+      }(jQuery));
+
+      $('.tumblr-test').on('click', '.tumblr-post', function (e) {
+        e.preventDefault();
+        tumbler.showAuthWindow();
+      });
+    }(jQuery));
+  </script>
+</body>
+</html>
+
+
