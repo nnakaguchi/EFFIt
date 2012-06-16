@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TILT</title>
+</head>
+<body>
+  <h1>TILT</h1>
+
+
+
+
+
+
+
+  <div class="sales"></div>
+  <section class="put-it-here">
+
+  </section>
+
+
+
+
+
+
+
+
+
+
+
+
+  <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+  <script type="text/javascript" src="/js/handlebars.js"></script>
+
+  <script id="sale-template" type="text/x-handlebars-template">
+    <article class="sale">
+      <h2 class="sale-name">{{name}}</h2>
+      <a href="/listing/{{sale_key}}" title="{{name}}">
+        <img src="{{image_url}}" />
+      </a>
+      <p>{{description}}</p>
+
+      <button class="tilt-this" type="tilt" data-sale-key="{{sale_key}}">Tilt This</button>
+    </article>
+  </script>
+
+  <script type="text/javascript">
+
+
+
+
+    (function ($) {
+
+      var tumbler = (function ($) {
+        var openWindow = function (url) {
+          window.open(url,
+                          "TumblrOAuth",
+                          "resizable=no,scrollbars=no,status=yes,width=500,height=500");
+        },
+
+        showAuthWindow = function (saleKey) {
+          openWindow("/oath/"+saleKey);
+        }
+
+        return {
+          showAuthWindow : showAuthWindow
+        };
+
+      }($));
+
+
+      $(function(){
+
+        var saleTemplate = Handlebars.compile($("#sale-template").html()),
+            sales = [],
+            $sales = $('.sales');
+
+        $.getJSON("/sales", function gimme (data) {
+          for (var i = 0; i < data.sales.length; i += 1) {
+            $sales.append(saleTemplate({
+              name : data.sales[i].name,
+              description : data.sales[i].description,
+              image_url : data.sales[i].image_urls["300x280"][0].url,
+              sale_key : data.sales[i].sale_key
+            }));
+          }
+        });
+
+        $('.put-it-here').append($sales);
+
+        $('.sales').on('click', '.tilt-this', function onSaleClick (e) {
+          var saleKey = $(this).data('sale-key');
+          console.debug(saleKey);
+          tumbler.showAuthWindow(saleKey);
+        });
+
+      });
+
+    }(jQuery));
+  </script>
+</body>
+</html>

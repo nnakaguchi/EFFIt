@@ -1,6 +1,10 @@
-var express = require('express'),
-  Tumblr = require(__dirname + '/lib/tumblr.js');
-
+var https = require('https'),
+    http = require('http'),
+    express = require('express'),
+    Tumblr = require(__dirname + '/lib/tumblr.js'),
+    app = express.createServer(express.logger()),
+    Tilt = require(__dirname + '/app/tilt.js'),
+    key = "be05e676a2e80ef764d49d352fb1d569";
 
 var app = express.createServer(express.logger());
 
@@ -22,9 +26,15 @@ app.configure(function () {
   //app.set('views', __dirname + '/views');
 });
 
+// app.get('/', function (request, response) {
+//   response.send('Hello World!');
+// });
 
-app.get('/', function(request, response) {
-  response.send('Hello World!');
+app.get('/sales', function (request, response) {
+  response.contentType('application/json');
+  Tilt.getSales(function (sales) {
+    response.send(sales);
+  });
 });
 
 app.get('/showProductForm', function (request, response) {
@@ -37,8 +47,21 @@ app.get('/oauth', function (request, response) {
   });
 });
 
+app.get('/oath/:salekey', function (req, res) {
+  var salekey = req.params.salekey;
+  if (salekey) {
+    Tumblr.authUrl(function (url) {
+      res.redirect(url);
+    });
+  }
+
+});
+
 
 var port = process.env.PORT || 5000;
+
+
+
 
 console.log(" // ");
 console.log(" // ");
